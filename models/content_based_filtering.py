@@ -1,24 +1,31 @@
+import sys
+sys.path.append('../ucu-recommender-system-2023/')
+
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
+from data_uploader.uploader import DataUploader
 
 class ContentBasedFiltering:
     """
-    A content-based filtering algorithm based on movie genres
+    A Content-Based Filtering algorithm
     """
 
     def __init__(self):
-        self.movies = pd.read_csv('/content/gdrive/My Drive/Colab Notebooks/ml-latest-small/movies.csv')
-        self.movies['genres'] = self.movies['genres'].fillna('')
-        self.indices = pd.Series(self.movies.index, index=self.movies['title']).drop_duplicates()
+        data_uploader = DataUploader()
+        self.movies, _, _ = data_uploader.get_user_item_data_surprise()
 
     def fit(self):
         # Use TF-IDF to convert the genres into vectors
         tfidf = TfidfVectorizer(stop_words='english')
+        self.movies['genres'] = self.movies['genres'].fillna('')
         tfidf_matrix = tfidf.fit_transform(self.movies['genres'])
 
         # Compute the cosine similarity matrix
         self.cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
+
+        # Create a reverse mapping of movie titles and DataFrame indices
+        self.indices = pd.Series(self.movies.index, index=self.movies['title']).drop_duplicates()
 
     def get_recommendations(self, title):
         # Get the index of the movie that matches the title
