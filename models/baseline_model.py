@@ -1,5 +1,9 @@
+import sys
+sys.path.append('../ucu-recommender-system-2023/')
+
 import numpy as np
 import pandas as pd
+from data_uploader.uploader import DataUploader
 
 class BaselineModel:
     """
