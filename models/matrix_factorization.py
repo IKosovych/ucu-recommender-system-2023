@@ -3,10 +3,10 @@ sys.path.append('../ucu-recommender-system-2023/')
 
 from surprise import SVD, NMF
 
-from data_uploader.uploader import DataUploader
+from models.base import BaseClass
 
 
-class MatrixFactorization:
+class MatrixFactorization(BaseClass):
     """
     Matrix Factorization with gradient descent optimization used as independent algorithms for recommendations
     There are 3 factorization approaches:
@@ -16,19 +16,14 @@ class MatrixFactorization:
     """
 
     def __init__(self):
-        data_uploader = DataUploader()
-        _, self.train_set, self.test_set = data_uploader.get_user_item_data_surprise()
+        super().__init__()
 
     def fit(self, factorization='svd'):
         if factorization == 'svd':
-            algo = SVD(biased=True)
+            self.model = SVD(biased=True)
         elif factorization == 'pmf':
-            algo = SVD(biased=False)
+            self.model = SVD(biased=False)
         elif factorization == 'nmf':
-            algo = NMF()
+            self.model = NMF()
 
-        algo.fit(self.train_set)
-        return algo
-
-    def predict_on_testset(self, model):
-        return model.test(self.test_set)
+        self.model.fit(self.train_set)
