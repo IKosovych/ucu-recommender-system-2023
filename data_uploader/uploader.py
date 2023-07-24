@@ -22,3 +22,7 @@ class DataUploader:
         train_set, test_set = surprise.model_selection.train_test_split(self.data, test_size=test_size)
         return self.df, train_set, test_set  
 
+    def get_user_item_data_for_cbf(self, test_size=0.25):
+        train_set, test_set = surprise.model_selection.train_test_split(self.data, test_size=test_size)
+        return self.df_movies, self.df_ratings, train_set, test_set  
+
