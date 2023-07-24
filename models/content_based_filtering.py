@@ -14,7 +14,7 @@ class ContentBasedFiltering:
 
     def __init__(self, train_size=0.75):
         data_uploader = DataUploader()
-        self.movies, self.ratings, _, _ = data_uploader.get_user_item_data_surprise()
+        self.movies, self.ratings, _, _ = data_uploader.get_user_item_data_for_cbf()
 
         self.movies['genres'] = self.movies['genres'].fillna('')
         self.indices = pd.Series(self.movies.index, index=self.movies['movieId']).drop_duplicates()
@@ -45,9 +45,6 @@ class ContentBasedFiltering:
 
         # Get the movie indices
         movie_indices = [i[0] for i in sim_scores]
-
-        # Return the top 10 most similar movies
-        return self.movies['title'].iloc[movie_indices]
 
         # Return the top 10 most similar movies
         return self.movies['title'].iloc[movie_indices]
