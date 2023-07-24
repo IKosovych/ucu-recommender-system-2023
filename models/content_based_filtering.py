@@ -4,44 +4,50 @@ sys.path.append('../ucu-recommender-system-2023/')
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
+from sklearn.model_selection import train_test_split
 from data_uploader.uploader import DataUploader
 
 class ContentBasedFiltering:
     """
-    A Content-Based Filtering algorithm
+    A content-based filtering algorithm based on movie genres
     """
 
-    def __init__(self):
+    def __init__(self, train_size=0.75):
         data_uploader = DataUploader()
-        self.movies, _, _ = data_uploader.get_user_item_data_surprise()
+        self.movies, self.ratings, _, _ = data_uploader.get_user_item_data_surprise()
+
+        self.movies['genres'] = self.movies['genres'].fillna('')
+        self.indices = pd.Series(self.movies.index, index=self.movies['movieId']).drop_duplicates()
+
+        # Split ratings data into training and testing sets
+        self.train_set, self.test_set = train_test_split(self.ratings, test_size=1-train_size, random_state=42, stratify=self.ratings['userId'])
 
     def fit(self):
         # Use TF-IDF to convert the genres into vectors
         tfidf = TfidfVectorizer(stop_words='english')
-        self.movies['genres'] = self.movies['genres'].fillna('')
         tfidf_matrix = tfidf.fit_transform(self.movies['genres'])
 
         # Compute the cosine similarity matrix
         self.cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
 
-        # Create a reverse mapping of movie titles and DataFrame indices
-        self.indices = pd.Series(self.movies.index, index=self.movies['title']).drop_duplicates()
+    def predict_on_testset(self, user_id):
+        # Get the movies that the user has watched
+        watched_movies = self.train_set[self.train_set['userId'] == user_id]['movieId'].tolist()
 
-    def get_recommendations(self, title):
-        # Get the index of the movie that matches the title
-        idx = self.indices[title]
+        # Get the pairwise similarity scores of all movies with each movie the user has watched
+        sim_scores = [list(enumerate(self.cosine_sim[self.indices[movie]])) for movie in watched_movies]
 
-        # Get the pairwise similarity scores of all movies with that movie
-        sim_scores = list(enumerate(self.cosine_sim[idx]))
-
-        # Sort the movies based on the similarity scores
-        sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+        # Flatten the list and sort it based on the similarity scores
+        sim_scores = sorted([score for sublist in sim_scores for score in sublist], key=lambda x: x[1], reverse=True)
 
         # Get the scores of the 10 most similar movies
         sim_scores = sim_scores[1:11]
 
         # Get the movie indices
         movie_indices = [i[0] for i in sim_scores]
+
+        # Return the top 10 most similar movies
+        return self.movies['title'].iloc[movie_indices]
 
         # Return the top 10 most similar movies
         return self.movies['title'].iloc[movie_indices]
