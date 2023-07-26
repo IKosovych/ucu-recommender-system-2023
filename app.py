@@ -18,6 +18,8 @@ cf.fit()
 # Get top-10 recommendations
 st.subheader("Get top-10 recommendations")
 st.dataframe(cf.get_recommendations(user_id=1, k=10))
+
+st.header("Matrix Factorization")
 mf = MatrixFactorization()
 mf.fit()
 
@@ -28,10 +30,10 @@ st.dataframe(mf.get_recommendations(user_id=1, k=10))
 # Metrics (there are all metrics from this lib)
 st.subheader("Metrics (there are all metrics from this lib)")
 predictions = cf.predict_on_testset()
-st.write(accuracy.rmse(predictions))
-st.write(accuracy.mse(predictions))
-st.write(accuracy.mae(predictions))
-st.write(accuracy.fcp(predictions))
+st.write(f"RMSE - {accuracy.rmse(predictions)}")
+st.write(f"MSE - {accuracy.mse(predictions)}")
+st.write(f"MAE - {accuracy.mae(predictions)}")
+st.write(f"FCP - {accuracy.fcp(predictions)}")
 
 # Cross-validatiion
 du = DataUploader()
@@ -41,21 +43,18 @@ st.write(cross_validate(mf.model, du.data, measures=["RMSE", "MAE"], cv=5, verbo
 st.header("Content-Based Filtering")
 
 cbf = ContentBasedFiltering()
-#cbf.fit()
+cbf.fit()
 
-#recommendations = cbf.predict_on_testset(2)
+number = st.number_input('Insert a user number: ', min_value=1, max_value=100, value=5, step=1)
 
-#st.write("Recommendations for User {}:".format(2))
-#for idx, title in enumerate(recommendations):
-#    print("{}: {}".format(idx+1, title))
+recommendations = cbf.predict_on_testset(number)
+st.subheader("Recommendations for User {}:".format(number))
+st.dataframe(recommendations)
 
-#data = [{'Index': idx+1, 'Title': title} for idx, title in enumerate(recommendations)]
-
-# Create a DataFrame from the list of dictionaries
-#df = pd.DataFrame(data)
-#st.dataframe(df)
-#average_ndcg = cbf.evaluate()
-#print(f'Average NDCG: {average_ndcg}')
+st.header("Baseline Model")
 bm = BaselineModel()
 bm.fit()
-print(bm.predict_on_testset(1))
+
+recommendations = bm.predict_on_testset(number)
+st.subheader("Recommendations for User {}:".format(number))
+st.dataframe(recommendations)
