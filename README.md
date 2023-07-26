@@ -30,7 +30,7 @@ To get started with UCU Recommender System 2023, follow these steps:
 3. Install the required dependencies: `pip install -r requirements.txt`
 
 With Docker
-1. docker build -t my_streamlit_app .
+1. `docker build -t my_streamlit_app .`
 
 Please note any specific system requirements or dependencies that might be needed.
 
@@ -40,10 +40,10 @@ Here's how you can use UCU Recommender System 2023:
 
 1. Run a command `streamlit run app.py`
 2. Interact with model
-![Photo of interaction](data/image.jpg)
+![Photo of interaction](data/ml-latest-small/image.jpg)
 
 With Docker
-1. docker run -p 8501:8501 my_streamlit_app
+1. `docker run -p 8501:8501 my_streamlit_app`
 
 ## 5. License
 
