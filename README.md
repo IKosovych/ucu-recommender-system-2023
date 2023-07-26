@@ -40,6 +40,7 @@ Here's how you can use UCU Recommender System 2023:
 
 1. Run a command `streamlit run app.py`
 2. Interact with model
+![Photo of interaction](data/image.jpg)
 
 With Docker
 1. docker run -p 8501:8501 my_streamlit_app
