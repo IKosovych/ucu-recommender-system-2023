@@ -8,11 +8,11 @@
 4. [Usage](#usage)
 5. [License](#license)
 
-## 1. Introduction
+## <a name="introduction"></a>1. Introduction
 
 Welcome to UCU Recommender System 2023! This project is an implementation of a recommender system developed as part of the Ihor Kosovych, Diana Kapatsyn and Stas Shostak team at the Ukrainian Catholic University. The recommender system aims to provide personalized movie recommendations to users based on their preferences and historical interactions.
 
-## 2. Features
+## <a name="features"></a>2. Features
 
 - User-based collaborative filtering
 - Item-based collaborative filtering
@@ -21,7 +21,7 @@ Welcome to UCU Recommender System 2023! This project is an implementation of a r
 - Hybrid recommendation approaches
 - Evaluation metrics (e.g., RMSE, MAE) for assessing recommendation performance
 
-## 3. Installation
+## <a name="installation"></a>3. Installation
 
 To get started with UCU Recommender System 2023, follow these steps:
 
@@ -34,7 +34,7 @@ With Docker
 
 Please note any specific system requirements or dependencies that might be needed.
 
-## 4. Usage
+## <a name="usage"></a>4. Usage
 
 Here's how you can use UCU Recommender System 2023:
 
@@ -45,6 +45,6 @@ Here's how you can use UCU Recommender System 2023:
 With Docker
 1. `docker run -p 8501:8501 my_streamlit_app`
 
-## 5. License
+## <a name="license"></a>5. License
 
 UCU Recommender System 2023 is licensed under the [choose appropriate license (e.g., MIT, Apache, GPL)] License. See the [LICENSE](LICENSE) file for more details.
