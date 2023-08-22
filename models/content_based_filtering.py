@@ -1,28 +1,30 @@
 import sys
+
 sys.path.append('../ucu-recommender-system-2023/')
 
+import pickle
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 from sklearn.model_selection import train_test_split
-from data_uploader.uploader import DataUploader
+
 
 class ContentBasedFiltering:
     """
     A content-based filtering algorithm based on movie genres
     """
 
-    def __init__(self, train_size=0.75):
-        data_uploader = DataUploader()
-        self.movies, self.ratings, _, _ = data_uploader.get_user_item_data_for_cbf()
+    def __init__(self, data_uploader, train_size=0.75):
+        self.movies, self.ratings = data_uploader.df_movies, data_uploader.df_ratings
 
         self.movies['genres'] = self.movies['genres'].fillna('')
         self.indices = pd.Series(self.movies.index, index=self.movies['movieId']).drop_duplicates()
 
         # Split ratings data into training and testing sets
-        self.train_set, self.test_set = train_test_split(self.ratings, test_size=1-train_size, random_state=42, stratify=self.ratings['userId'])
+        self.train_set, self.test_set = train_test_split(self.ratings, test_size=1 - train_size, random_state=42,
+                                                         stratify=self.ratings['userId'])
 
-    def fit(self):
+    def fit(self, save=True, file_name=None):
         # Use TF-IDF to convert the genres into vectors
         tfidf = TfidfVectorizer(stop_words='english')
         tfidf_matrix = tfidf.fit_transform(self.movies['genres'])
@@ -30,7 +32,16 @@ class ContentBasedFiltering:
         # Compute the cosine similarity matrix
         self.cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
 
-    def predict_on_testset(self, user_id):
+        if save:
+            with open(file_name, 'wb') as handle:
+                pickle.dump(self.__dict__, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+    def load_model(self, file_name):
+        with open(file_name, 'rb') as handle:
+            tmp_dict = pickle.load(handle)
+            self.__dict__.update(tmp_dict)
+
+    def predict(self, user_id):
         # Get the movies that the user has watched
         watched_movies = self.train_set[self.train_set['userId'] == user_id]['movieId'].tolist()
 

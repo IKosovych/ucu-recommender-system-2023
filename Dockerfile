@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Copy the app.py file and other required files
 COPY app.py .
-COPY evaluation.py evaluation.py
+COPY main.py main.py
 COPY models/ models/
 COPY data/ data/
 COPY data_uploader/ data_uploader/

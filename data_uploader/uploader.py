@@ -1,4 +1,5 @@
 import sys
+
 sys.path.append('../ucu-recommender-system-2023/')
 
 import pandas as pd
@@ -8,21 +9,31 @@ from surprise import Dataset, Reader
 
 class DataUploader:
     def __init__(self):
-        self.df_movies = pd.read_csv('data/ml-latest-small/movies.csv')
-        self.df_ratings = pd.read_csv('data/ml-latest-small/ratings.csv')
+        self.df_movies = pd.read_csv(
+            'data/ml-1m/movies.dat',
+            sep="::",
+            names=['movieId', 'title', 'genres'],
+            encoding='latin-1',
+            engine='python',
+        )
+        self.df_ratings = pd.read_csv(
+            'data/ml-1m/ratings.dat',
+            sep="::",
+            names=['userId', 'movieId', 'rating', 'timestamp'],
+            engine='python',
+        )
 
         ratings_dict = {'itemID': list(self.df_ratings.movieId),
                         'userID': list(self.df_ratings.userId),
                         'rating': list(self.df_ratings.rating)}
         self.df = pd.DataFrame(ratings_dict)
+
         reader = Reader(rating_scale=(0.5, 5.0))
-        self.data = Dataset.load_from_df(self.df[['userID', 'itemID', 'rating']], reader)
+        self.dataset = Dataset.load_from_df(self.df[['userID', 'itemID', 'rating']], reader)
 
-    def get_user_item_data_surprise(self, test_size=0.25):
-        train_set, test_set = surprise.model_selection.train_test_split(self.data, test_size=test_size)
-        return self.df, train_set, test_set  
+        self.train_set = None
+        self.eval_set = None
 
-    def get_user_item_data_for_cbf(self, test_size=0.25):
-        train_set, test_set = surprise.model_selection.train_test_split(self.data, test_size=test_size)
-        return self.df_movies, self.df_ratings, train_set, test_set  
-
+    def split_train_eval_sets(self, test_size=0.25):
+        self.train_set, self.eval_set = surprise.model_selection.train_test_split(self.dataset,
+                                                                                  test_size=test_size)
