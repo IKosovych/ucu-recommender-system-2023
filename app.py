@@ -9,6 +9,7 @@ from models.matrix_factorization import MatrixFactorization
 from models.content_based_filtering import ContentBasedFiltering
 from models.baseline_model import BaselineModel
 from data_uploader.uploader import DataUploader
+from ab_distributor import ABtestDistributor
 
 
 st.title('Evaluation')
@@ -58,3 +59,24 @@ bm.fit()
 recommendations = bm.predict_on_testset(number)
 st.subheader("Recommendations for User {}:".format(number))
 st.dataframe(recommendations)
+
+st.header("AB Test User Stliting")
+
+# Get the distributor's model choice for a specific user
+distributor = ABtestDistributor(data_uploader=du)
+distributor.split_users(model_a='ContentBasedFiltering', model_b='BaselineModel')
+
+number_distributor = st.number_input('Insert a user ID for AB test split:', min_value=1, max_value=10000, value=4, step=1)
+
+model_name = distributor.get_model_name(number_distributor)
+if model_name == 'ContentBasedFiltering':
+    cbf_distributor = ContentBasedFiltering()
+    cbf_distributor.fit()
+    recommendations_distributor = cbf_distributor.predict_on_testset(number_distributor)
+elif model_name == 'BaselineModel':
+    bm_distributor = BaselineModel()
+    bm_distributor.fit()
+    recommendations_distributor = bm_distributor.predict_on_testset(number_distributor)
+
+st.subheader("Recommendations for User {} (Distributor's Choice - {}):".format(number_distributor, model_name))
+st.dataframe(recommendations_distributor)
