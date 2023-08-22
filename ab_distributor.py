@@ -18,7 +18,7 @@ class ABtestDistributor:
         self.model_a = ''
         self.model_b = ''
 
-    def split_users(self, model_a, model_b, split=0.2, n_clusters=2):
+    def split_users(self, model_a, model_b, split=0.3, n_clusters=2):
         # create base list of users
         self.model_a = model_a
         self.model_b = model_b
@@ -31,7 +31,8 @@ class ABtestDistributor:
         for n in range(n_clusters):
             ids = self.user_list[self.user_list['user_type'] == n]['userId']
             num_elements = int(split * len(ids))
-
+            
+             # Randomly select 30% of elements from the array
             selected_elements = np.random.choice(ids, size=num_elements, replace=False)
 
             self.user_list.loc[self.user_list['userId'].isin(selected_elements), 'model'] = model_b
