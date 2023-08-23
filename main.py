@@ -14,9 +14,13 @@ data_uploader.split_train_eval_sets()
 
 bm = BaselineModel(data_uploader)
 bm.fit(save=True, file_name='dumped_models/baseline.pickle')
+bm_ndcg_score = bm.evaluate_ndcg()
+print(f"Average NDCG for Baseline Model: {bm_ndcg_score:.4f}")
 
 cbf = ContentBasedFiltering(data_uploader)
 cbf.fit(save=True, file_name='dumped_models/content_based.pickle')
+average_ndcg_from_cdf = cbf.evaluate_ndcg()
+print(f'Average NDCG for ContentBasedFiltering model: {average_ndcg_from_cdf}')
 
 # Collaborative Filtering
 df = pd.DataFrame(columns=['KNN_modification', 'type', 'similarity_measure',
