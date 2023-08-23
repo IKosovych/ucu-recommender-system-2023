@@ -43,20 +43,20 @@ st.write(cross_validate(mf.model, du.data, measures=["RMSE", "MAE"], cv=5, verbo
 
 st.header("Content-Based Filtering")
 
-cbf = ContentBasedFiltering()
-cbf.fit()
+cbf = ContentBasedFiltering(data_uploader=du)
+cbf.fit(save=False)
 
 number = st.number_input('Insert a user number: ', min_value=1, max_value=100, value=5, step=1)
 
-recommendations = cbf.predict_on_testset(number)
+recommendations = cbf.predict(number)
 st.subheader("Recommendations for User {}:".format(number))
 st.dataframe(recommendations)
 
 st.header("Baseline Model")
-bm = BaselineModel()
-bm.fit()
+bm = BaselineModel(data_uploader=du)
+bm.fit(save=False)
 
-recommendations = bm.predict_on_testset(number)
+recommendations = bm.predict(number)
 st.subheader("Recommendations for User {}:".format(number))
 st.dataframe(recommendations)
 
@@ -70,13 +70,13 @@ number_distributor = st.number_input('Insert a user ID for AB test split:', min_
 
 model_name = distributor.get_model_name(number_distributor)
 if model_name == 'ContentBasedFiltering':
-    cbf_distributor = ContentBasedFiltering()
-    cbf_distributor.fit()
-    recommendations_distributor = cbf_distributor.predict_on_testset(number_distributor)
+    cbf_distributor = ContentBasedFiltering(data_uploader=du)
+    cbf_distributor.fit(save=False)
+    recommendations_distributor = cbf_distributor.predict(number_distributor)
 elif model_name == 'BaselineModel':
-    bm_distributor = BaselineModel()
-    bm_distributor.fit()
-    recommendations_distributor = bm_distributor.predict_on_testset(number_distributor)
+    bm_distributor = BaselineModel(data_uploader=du)
+    bm_distributor.fit(save=False)
+    recommendations_distributor = bm_distributor.predict(number_distributor)
 
 st.subheader("Recommendations for User {} (Distributor's Choice - {}):".format(number_distributor, model_name))
 st.dataframe(recommendations_distributor)
