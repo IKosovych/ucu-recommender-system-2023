@@ -65,3 +65,23 @@ class BaselineModel:
         top_10_recs = filtered_films.drop_duplicates(subset=['movieId']).head(10)
         top_10_recs = top_10_recs.merge(self.df_movies, on='movieId')
         return top_10_recs[['movieId', 'title', 'rank']]
+
+    def evaluate_ndcg(self, k=10):
+        users = self.train_set['userId'].unique()
+        average_ndcg = []
+
+        for user in users:
+            actual_movies = self.train_set[self.train_set['userId'] == user]['movieId'].tolist()
+            recommended_movies = self.predict(user)['movieId'].tolist()
+
+            # Binarize actual and predicted movies
+            lb = LabelBinarizer()
+            lb.fit(list(self.df_movies['movieId']))
+            actual_binary = lb.transform(actual_movies)[:k]
+            recommended_binary = lb.transform(recommended_movies)
+
+            # Compute NDCG for this user
+            user_ndcg = ndcg_score(actual_binary, recommended_binary, k=k)
+            average_ndcg.append(user_ndcg)
+
+        return np.mean(average_ndcg)
