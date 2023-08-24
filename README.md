@@ -39,9 +39,10 @@ Please note any specific system requirements or dependencies that might be neede
 Here's how you can use UCU Recommender System 2023:
 
 1. Download saved models from [the GoogleDrive](https://drive.google.com/drive/folders/1dVzFUEToKQPHvoJafIH8JImHRyxCLm3d?usp=sharing) (folder "best")
-2. Move the downloaded folder "best" to the folder "dumped_models" in the project
-3. Run a command `streamlit run app.py`
-4. Interact with model
+2. Create folder "dumped_models"
+3. Move the downloaded folder "best" to the folder "dumped_models" in the project
+4. Run a command `streamlit run app.py`
+5. Interact with model
 ![Photo of interaction](data/ml-latest-small/image.jpg)
 
 With Docker
