@@ -2,11 +2,15 @@ import sys
 
 sys.path.append('../ucu-recommender-system-2023/')
 
+from tqdm import tqdm
 import pickle
 import pandas as pd
+import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 from sklearn.model_selection import train_test_split
+from sklearn import preprocessing
+from sklearn.metrics import ndcg_score
 
 
 class ContentBasedFiltering:
@@ -64,14 +68,14 @@ class ContentBasedFiltering:
         users = self.test_set['userId'].unique()
         average_ndcg = []
 
-        for user in users:
+        for user in tqdm(users):
             actual = self.test_set[self.test_set['userId'] == user]['movieId'].tolist()
-            predicted = self.predict_on_testset(user)
+            predicted = self.predict(user)
 
             # Convert movie titles back to ids for evaluation
-            predicted_ids = self.df_movies[self.df_movies['title'].isin(predicted)]['movieId'].tolist()
+            predicted_ids = self.movies[self.movies['title'].isin(predicted)]['movieId'].tolist()
 
-            lb = LabelBinarizer()
+            lb = preprocessing.LabelBinarizer()
             lb.fit(actual)
 
             if len(predicted_ids) <= len(actual):

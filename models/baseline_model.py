@@ -2,9 +2,12 @@ import sys
 
 sys.path.append('../ucu-recommender-system-2023/')
 
+from tqdm import tqdm
 import pickle
 import numpy as np
 import pandas as pd
+from sklearn import preprocessing
+from sklearn.metrics import ndcg_score
 
 
 class BaselineModel:
@@ -70,12 +73,12 @@ class BaselineModel:
         users = self.train_set['userId'].unique()
         average_ndcg = []
 
-        for user in users:
+        for user in tqdm(users):
             actual_movies = self.train_set[self.train_set['userId'] == user]['movieId'].tolist()
             recommended_movies = self.predict(user)['movieId'].tolist()
 
             # Binarize actual and predicted movies
-            lb = LabelBinarizer()
+            lb = preprocessing.LabelBinarizer()
             lb.fit(list(self.df_movies['movieId']))
             actual_binary = lb.transform(actual_movies)[:k]
             recommended_binary = lb.transform(recommended_movies)
