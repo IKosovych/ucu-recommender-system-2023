@@ -20,7 +20,7 @@ cf = CollaborativeFiltering(data_uploader)
 cf.load_model(model_name)
 
 # Get top-10 recommendations
-number = st.number_input('Insert a user number: ', min_value=1, max_value=6000, value=5, step=1)
+number = st.number_input('Insert a user number for Collaborative Filtering: ', min_value=1, max_value=6000, value=5, step=1)
 
 st.subheader(f"Top-10 recommendations for the User {number}")
 st.dataframe(cf.get_recommendations(user_id=number, k=10))
@@ -31,7 +31,7 @@ mf = MatrixFactorization(data_uploader)
 mf.load_model(model_name)
 
 # Get top-10 recommendations
-number = st.number_input('Insert a user number: ', min_value=1, max_value=6000, value=5, step=1)
+number = st.number_input('Insert a user number for MatrixFactorization: ', min_value=1, max_value=6000, value=5, step=1)
 
 st.subheader(f"Top-10 recommendations for the User {number}")
 st.dataframe(mf.get_recommendations(user_id=number, k=10))
@@ -62,7 +62,7 @@ model_name = 'dumped_models/best/content_based.pickle'
 cb = ContentBasedFiltering(data_uploader=data_uploader)
 cb.load_model(model_name)
 
-number = st.number_input('Insert a user number: ', min_value=1, max_value=100, value=5, step=1)
+number = st.number_input('Insert a user numbe for ContentBasedFiltering: ', min_value=1, max_value=100, value=5, step=1)
 
 recommendations = cb.predict(user_id=number)
 st.subheader("Recommendations for User {}:".format(number))
